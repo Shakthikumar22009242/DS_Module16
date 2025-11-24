@@ -1,118 +1,59 @@
-# EXERCISE 17: AVL Tree – Right Rotation
-
-## DATE:
-25-03-2025
-
+# Ex17 Reversing a String Using Stack Data Structure
+## DATE: 01-11-25
 ## AIM:
-To write a C function to perform right rotation in an AVL Tree.
+To write a Java program that reverses an input string using a stack, without using built-in reverse functions.
 
----
-
-## Algorithm:
-1. Define a structure for the AVL Tree node with data, left and right child pointers, and height.
-2. Create helper functions:
-   - `height()` – returns height of a node.
-   - `max()` – returns max of two integers.
-3. Implement the `rotateRight()` function:
-   - Let `y` be the unbalanced node and `x` be its left child.
-   - Perform the right rotation by making `x` the new root of the subtree.
-   - Adjust pointers accordingly.
-   - Update the heights of the affected nodes.
-4. Write a sample insertion setup to create a Left-Left imbalance and apply `rotateRight()` manually.
-5. Use in-order traversal to display the balanced tree.
-
----
+## Algorithm
+1. Start the program.
+2. Read the input string from the user.
+3. Create an empty stack of characters.
+4. Traverse the string and push each character onto the stack.
+5. Pop each character from the stack and append it to a new string — this gives the reversed string.
+6. Display the reversed string.
+7. Stop the program.  
 
 ## Program:
-```c
+```
 /*
-Program to perform right rotation in AVL Tree
+Program to reverses an input string using a stack
 Developed by: SHAKTHI KUMAR S
 RegisterNumber: 212222110043
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+import java.util.Scanner;
+import java.util.Stack;
 
-// Define the structure of a node
-struct Node {
-    int key;
-    struct Node* left;
-    struct Node* right;
-    int height;
-};
+public class ReverseStringWithStack {
 
-// Utility function to get height
-int height(struct Node* N) {
-    if (N == NULL)
-        return 0;
-    return N->height;
-}
+    public static String reverseString(String input) {
+         Stack<Character> stack=new Stack<>();
+        for(char ch:input.toCharArray())
+        {
+            stack.push(ch);
+        }
+        StringBuilder rev=new StringBuilder();
+        while(!stack.isEmpty())
+        {
+            rev.append(stack.pop());
+        }
+        return rev.toString();
+    }
 
-// Utility function to get max of two integers
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        String reversed = reverseString(input);
+        System.out.println(reversed);
 
-// Create a new node
-struct Node* newNode(int key) {
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->key = key;
-    node->left = node->right = NULL;
-    node->height = 1;
-    return node;
-}
-
-// Function to perform right rotation
-struct Node* rotateRight(struct Node* y) {
-    struct Node* x = y->left;
-    struct Node* T2 = x->right;
-
-    // Perform rotation
-    x->right = y;
-    y->left = T2;
-
-    // Update heights
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    // Return new root
-    return x;
-}
-
-// Inorder traversal of the tree
-void inorder(struct Node* root) {
-    if (root != NULL) {
-        inorder(root->left);
-        printf("%d ", root->key);
-        inorder(root->right);
+        scanner.close();
     }
 }
-
-int main() {
-    // Simulating Left-Left imbalance
-    struct Node* root = newNode(30);
-    root->left = newNode(20);
-    root->left->left = newNode(10);
-
-    printf("Before Right Rotation (Inorder):\n");
-    inorder(root);
-
-    // Apply Right Rotation
-    root = rotateRight(root);
-
-    printf("\nAfter Right Rotation (Inorder):\n");
-    inorder(root);
-
-    return 0;
-}
-
 ```
 
 ## Output:
-![image](https://github.com/user-attachments/assets/5ecc05e5-0f2e-428d-9815-f41ede73ad52)
+<img width="467" height="339" alt="514898171-72f8e832-0d20-4766-b7c1-580040bb803e" src="https://github.com/user-attachments/assets/c2884009-399a-4e14-a487-6eac32caf579" />
 
 
 
 ## Result:
-Thus, the function to perform right rotation in an AVL Tree is implemented successfully.
+Thus, the program successfully reverses the given string using a stack without relying on built-in reverse functions.
