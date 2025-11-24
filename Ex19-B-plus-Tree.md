@@ -1,115 +1,61 @@
-# EXERCISE 19: B+ Tree – Traversal
-
-## DATE:
-31-03-2025
-
+# Ex19 Palindrome Check Using Deque
+## DATE: 01-11-25
 ## AIM:
-To write a C function to traverse the elements in a B+ Tree.
+To design a program that checks whether a given message is a palindrome by removing all non-alphanumeric characters, converting all characters to lowercase, and using a deque data structure for comparison.
 
----
-
-## Algorithm:
-1. **Define** a B+ tree node structure that contains keys and children.
-2. Ensure **leaf nodes are linked** together to allow for fast range traversal.
-3. Insert multiple keys into the B+ Tree (for demonstration).
-4. Traverse the B+ Tree:
-   - If internal node: recursively traverse children.
-   - If leaf node: print all keys in left-to-right order using the linked list of leaves.
-
----
+## Algorithm
+1. Start the program.
+2. Read the input string from the user.
+3. Remove all non-alphanumeric characters and convert the string to lowercase.
+4. Use a deque to store characters of the string.
+5. Compare characters from both ends of the deque.
+6. If all pairs match, it’s a palindrome; otherwise, it’s not.
+7. Display the result.
+  
 
 ## Program:
-```c
+```
 /*
-Program to traverse the elements in a B+ Tree.
+Program to checks whether a given message is a palindrome by removing all non-alphanumeric characters.
 Developed by: SHAKTHI KUMAR S
-RegisterNumber: 212222110043
+RegisterNumber:  212222110043
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+import java.util.*;
 
-#define MAX 3
+public class PalindromeDeque {
+    public static boolean isPalindrome(String str) {
+        Deque<Character> deque = new LinkedList<>();
+        for (char c : str.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) {
+                deque.add(Character.toLowerCase(c));
+            }
+        }
 
-typedef struct BPlusTreeNode {
-    int keys[MAX];
-    struct BPlusTreeNode *children[MAX + 1];
-    struct BPlusTreeNode *next;  // For leaf linking
-    bool isLeaf;
-    int n;
-} BPlusTreeNode;
-
-BPlusTreeNode* root = NULL;
-
-// Create node
-BPlusTreeNode* createNode(bool isLeaf) {
-    BPlusTreeNode* node = (BPlusTreeNode*)malloc(sizeof(BPlusTreeNode));
-    node->isLeaf = isLeaf;
-    node->n = 0;
-    node->next = NULL;
-    for (int i = 0; i <= MAX; i++)
-        node->children[i] = NULL;
-    return node;
-}
-
-// Simple insert (for demo)
-void simpleInsertLeaf(BPlusTreeNode* root, int key) {
-    int i = root->n - 1;
-    while (i >= 0 && root->keys[i] > key) {
-        root->keys[i + 1] = root->keys[i];
-        i--;
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast())
+                return false;
+        }
+        return true;
     }
-    root->keys[i + 1] = key;
-    root->n++;
-}
 
-// For demo: only handles insertion into a single root leaf
-void insert(int key) {
-    if (root == NULL) {
-        root = createNode(true);
-    }
-    if (root->n < MAX) {
-        simpleInsertLeaf(root, key);
-    } else {
-        printf("Node full. Full B+ Tree insert not implemented in this demo.\n");
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter a message: ");
+        String message = sc.nextLine();
+        if (isPalindrome(message))
+            System.out.println("Palindrome");
+        else
+            System.out.println("Not a Palindrome");
+        sc.close();
     }
 }
-
-// Traverse B+ Tree by leaf nodes
-void traverse(BPlusTreeNode* root) {
-    if (!root) return;
-    BPlusTreeNode* curr = root;
-    while (!curr->isLeaf)
-        curr = curr->children[0];
-
-    printf("Traversal through leaf nodes:\n");
-    while (curr) {
-        for (int i = 0; i < curr->n; i++)
-            printf("%d ", curr->keys[i]);
-        curr = curr->next;
-    }
-    printf("\n");
-}
-
-// Main
-int main() {
-    insert(10);
-    insert(20);
-    insert(5);
-    insert(15); // Won’t insert due to MAX = 3 in demo
-
-    printf("B+ Tree leaf traversal:\n");
-    traverse(root);
-    return 0;
-}
-
 ```
 
 ## Output:
 
-![image](https://github.com/user-attachments/assets/c48bad05-6459-4c93-bde6-245df3bc9b58)
+<img width="459" height="252" alt="514901220-e038d3e3-303b-4f2c-8b5a-87ee42c3172c" src="https://github.com/user-attachments/assets/8dd80715-ec35-4173-90bd-22afb6c28aeb" />
 
 
 ## Result:
-Thus, the function to traverse the elements in a B+ Tree is implemented successfully.
+The program successfully removes all non-alphanumeric characters, converts the text to lowercase, and uses a deque to efficiently compare characters from both ends. Hence, it determines whether the string is a palindrome.
