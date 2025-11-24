@@ -1,200 +1,80 @@
-# EXERCISE 20: AVL Tree – Deletion
-
-## DATE:
-01-04-2025
-
+# Ex20 Sorting an Array using Merge Sort Algorithm
+## DATE: 01-11-25
 ## AIM:
-To write a C function to delete an element from an AVL Tree.
-
----
-
-## Algorithm:
-1. **Start** at the root node.
-2. **Search** for the node to delete using binary search logic.
-3. **Delete** the node:
-   - If node is a leaf, simply remove it.
-   - If it has one child, replace node with the child.
-   - If it has two children, find inorder successor or predecessor.
-4. **Update the height** of the current node.
-5. **Balance** the tree:
-   - Calculate the balance factor.
-   - Apply appropriate rotation (LL, LR, RR, RL) based on imbalance.
-
----
+To design a program that sorts a given array of integers in ascending order without using built-in sorting functions, achieving O(n log n) time complexity and minimal space usage.
+## Algorithm
+1. Start the program.
+2. Divide the array into two halves using recursion
+3. Continue dividing until each subarray contains a single element.
+4. Merge the subarrays in sorted order using a helper merge function.
+5. Return the fully sorted array.
+6. Display the sorted array.
+   
 
 ## Program:
-```c
+```
 /*
-Program to delete an element from an AVL Tree
+Program to sort a given array of integers in ascending order without using built-in sorting functions
 Developed by: SHAKTHI KUMAR S
 RegisterNumber: 212222110043
 */
+import java.util.*;
 
-#include <stdio.h>
-#include <stdlib.h>
+public class MergeSort {
+    public static void merge(int arr[], int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
 
-typedef struct Node {
-    int key;
-    struct Node* left;
-    struct Node* right;
-    int height;
-} Node;
+        int L[] = new int[n1];
+        int R[] = new int[n2];
 
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
+        for (int i = 0; i < n1; ++i)
+            L[i] = arr[left + i];
+        for (int j = 0; j < n2; ++j)
+            R[j] = arr[mid + 1 + j];
 
-int height(Node* N) {
-    if (N == NULL)
-        return 0;
-    return N->height;
-}
-
-Node* createNode(int key) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->key = key;
-    node->left = node->right = NULL;
-    node->height = 1;
-    return node;
-}
-
-Node* rightRotate(Node* y) {
-    Node* x = y->left;
-    Node* T2 = x->right;
-
-    x->right = y;
-    y->left = T2;
-
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    return x;
-}
-
-Node* leftRotate(Node* x) {
-    Node* y = x->right;
-    Node* T2 = y->left;
-
-    y->left = x;
-    x->right = T2;
-
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    return y;
-}
-
-int getBalance(Node* N) {
-    if (N == NULL)
-        return 0;
-    return height(N->left) - height(N->right);
-}
-
-Node* minValueNode(Node* node) {
-    Node* current = node;
-    while (current->left != NULL)
-        current = current->left;
-    return current;
-}
-
-Node* insert(Node* node, int key) {
-    if (node == NULL)
-        return createNode(key);
-
-    if (key < node->key)
-        node->left = insert(node->left, key);
-    else if (key > node->key)
-        node->right = insert(node->right, key);
-    else
-        return node;
-
-    node->height = 1 + max(height(node->left), height(node->right));
-
-    int balance = getBalance(node);
-
-    // Balancing
-    if (balance > 1 && key < node->left->key)
-        return rightRotate(node);
-
-    if (balance < -1 && key > node->right->key)
-        return leftRotate(node);
-
-    if (balance > 1 && key > node->left->key) {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j])
+                arr[k++] = L[i++];
+            else
+                arr[k++] = R[j++];
+        }
+        while (i < n1)
+            arr[k++] = L[i++];
+        while (j < n2)
+            arr[k++] = R[j++];
     }
 
-    if (balance < -1 && key < node->right->key) {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
-    }
-
-    return node;
-}
-
-Node* deleteNode(Node* root, int key) {
-    if (root == NULL)
-        return root;
-
-    if (key < root->key)
-        root->left = deleteNode(root->left, key);
-    else if (key > root->key)
-        root->right = deleteNode(root->right, key);
-    else {
-        if ((root->left == NULL) || (root->right == NULL)) {
-            Node* temp = root->left ? root->left : root->right;
-
-            if (temp == NULL) {
-                temp = root;
-                root = NULL;
-            } else
-                *root = *temp;
-
-            free(temp);
-        } else {
-            Node* temp = minValueNode(root->right);
-
-            root->key = temp->key;
-            root->right = deleteNode(root->right, temp->key);
+    public static void sort(int arr[], int left, int right) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            sort(arr, left, mid);
+            sort(arr, mid + 1, right);
+            merge(arr, left, mid, right);
         }
     }
 
-    if (root == NULL)
-        return root;
-
-    root->height = 1 + max(height(root->left), height(root->right));
-    int balance = getBalance(root);
-
-    // Balancing
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return rightRotate(root);
-
-    if (balance > 1 && getBalance(root->left) < 0) {
-        root->left = leftRotate(root->left);
-        return rightRotate(root);
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of elements: ");
+        int n = sc.nextInt();
+        int arr[] = new int[n];
+        System.out.println("Enter the elements:");
+        for (int i = 0; i < n; i++)
+            arr[i] = sc.nextInt();
+        sort(arr, 0, n - 1);
+        System.out.println("Sorted array: " + Arrays.toString(arr));
+        sc.close();
     }
-
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return leftRotate(root);
-
-    if (balance < -1 && getBalance(root->right) > 0) {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
-    }
-
-    return root;
 }
-
-void preOrder(Node* root) {
-    if (root != NULL) {
-        printf("%d ",
-
 ```
 
 ## Output:
-![image](https://github.com/user-attachments/assets/7d1a260c-9d71-4e9b-a660-6fe0b54e518f)
+<img width="620" height="297" alt="514902221-5fc90908-90ae-4e4d-9ab6-e2c41a45e87a" src="https://github.com/user-attachments/assets/f6483e9e-fa69-4a22-bce1-fb0d7c423b4d" />
 
 
 
 ## Result:
-Thus, the C program to delete an element from an AVL Tree is implemented successfully.
+The program has been successfully implemented and executed.
+It sorts the given array of integers in ascending order using the Merge Sort algorithm with a time complexity of O(n log n) and minimal extra space.
