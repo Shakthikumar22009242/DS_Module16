@@ -1,187 +1,113 @@
-# EXERCISE 16: AVL Tree – Insertion
-
-## DATE:
-24-03-2025
-
+# Ex16 Check for Balanced Parentheses Using Stack
+## DATE: 01-11-25
 ## AIM:
-To write a C function to insert the elements in an AVL Tree.
+To write a Java program that verifies whether the parentheses (brackets) in an input string are balanced — meaning each opening bracket (, {, [ has a corresponding and correctly ordered closing bracket ), }, ].
 
----
+## Algorithm
+Start the program.
 
-## Algorithm:
-1. Define a structure for the AVL Tree node with data, left and right pointers, and height.
-2. Create utility functions:
-   - `height()` – returns the height of a node.
-   - `max()` – returns the maximum of two integers.
-   - `getBalance()` – returns the balance factor of a node.
-   - `rotateRight()` – performs a right rotation.
-   - `rotateLeft()` – performs a left rotation.
-3. Create the `insert()` function:
-   - Insert the node using normal BST insertion.
-   - Update the height.
-   - Check balance factor.
-   - Perform appropriate rotations (LL, RR, LR, RL) to balance the tree.
-4. In the `main()` function, insert elements and optionally print the tree using in-order traversal.
-5. End.
+Create an empty stack.
 
----
+Traverse each character in the string.
+
+Push opening brackets onto the stack.
+
+When a closing bracket is encountered, check if it matches the top of the stack.
+
+If any mismatch or leftover element exists, the parentheses are not balanced.
+
+If the stack is empty at the end, the parentheses are balanced. 
 
 ## Program:
-```c
+```
 /*
-Program to insert the elements in an AVL Tree
+Program to verify whether the parentheses (brackets) in an input string are balanced
 Developed by: SHAKTHI KUMAR S
 RegisterNumber: 212222110043
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+import java.util.Scanner;
 
-// AVL Tree node structure
-struct Node {
-    int key;
-    struct Node* left;
-    struct Node* right;
-    int height;
-};
-
-// Utility function to get the height of a node
-int height(struct Node* N) {
-    if (N == NULL)
-        return 0;
-    return N->height;
-}
-
-// Utility function to get maximum of two integers
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
-
-// Create a new AVL tree node
-struct Node* newNode(int key) {
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->key = key;
-    node->left = node->right = NULL;
-    node->height = 1; // New node is initially added at leaf
-    return node;
-}
-
-// Right rotate subtree rooted with y
-struct Node* rotateRight(struct Node* y) {
-    struct Node* x = y->left;
-    struct Node* T2 = x->right;
-
-    // Perform rotation
-    x->right = y;
-    y->left = T2;
-
-    // Update heights
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    // Return new root
-    return x;
-}
-
-// Left rotate subtree rooted with x
-struct Node* rotateLeft(struct Node* x) {
-    struct Node* y = x->right;
-    struct Node* T2 = y->left;
-
-    // Perform rotation
-    y->left = x;
-    x->right = T2;
-
-    // Update heights
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    // Return new root
-    return y;
-}
-
-// Get balance factor of node N
-int getBalance(struct Node* N) {
-    if (N == NULL)
-        return 0;
-    return height(N->left) - height(N->right);
-}
-
-// Recursive function to insert a key in the subtree rooted with node and return the new root
-struct Node* insert(struct Node* node, int key) {
-    // Perform the normal BST insertion
-    if (node == NULL)
-        return newNode(key);
-
-    if (key < node->key)
-        node->left = insert(node->left, key);
-    else if (key > node->key)
-        node->right = insert(node->right, key);
-    else // Equal keys not allowed
-        return node;
-
-    // Update height of this ancestor node
-    node->height = 1 + max(height(node->left), height(node->right));
-
-    // Get the balance factor to check whether this node became unbalanced
-    int balance = getBalance(node);
-
-    // Left Left Case
-    if (balance > 1 && key < node->left->key)
-        return rotateRight(node);
-
-    // Right Right Case
-    if (balance < -1 && key > node->right->key)
-        return rotateLeft(node);
-
-    // Left Right Case
-    if (balance > 1 && key > node->left->key) {
-        node->left = rotateLeft(node->left);
-        return rotateRight(node);
+public class ParenChecker {
+    static class ArrayStack
+    {
+        private char[] data;
+        private int top;
+        public ArrayStack(int capacity)
+        {
+            data=new char[capacity];
+            top=-1;
+        }
+        public boolean isEmpty()
+        {
+            return top==-1;
+        }
+        
+        public boolean isFull()
+        {
+            return top==data.length-1;
+        }
+        public void push(char c)
+        {
+            if(isFull())
+            {
+                System.out.println("Stack overflow");
+            }
+            data[++top]=c;
+        }
+        public char pop()
+        {
+            if(isEmpty())
+            {
+                System.out.println("Stack underflow");
+            }
+            return data[top--];
+            
+            
+        }
+        public char peek()
+        {
+            if(isEmpty())
+            {
+                System.out.println("Stack underflow");
+            }
+            return data[top];
+        }
     }
 
-    // Right Left Case
-    if (balance < -1 && key < node->right->key) {
-        node->right = rotateRight(node->right);
-        return rotateLeft(node);
+
+    public static boolean isBalanced(String expr) {
+        ArrayStack st = new ArrayStack(expr.length());
+        for (char ch : expr.toCharArray()) {
+            if (ch == '(' || ch == '{' || ch == '[') {
+                st.push(ch);
+            } else if (ch == ')' || ch == '}' || ch == ']') {
+                if (st.isEmpty()) return false;
+                char top = st.pop();
+                if ((ch == ')' && top != '(') ||
+                    (ch == '}' && top != '{') ||
+                    (ch == ']' && top != '[')) {
+                    return false;
+                }
+            }
+        }
+        return st.isEmpty();
     }
 
-    // Return the (unchanged) node pointer
-    return node;
-}
-
-// Inorder traversal of the tree
-void inorder(struct Node* root) {
-    if (root != NULL) {
-        inorder(root->left);
-        printf("%d ", root->key);
-        inorder(root->right);
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String expr = sc.nextLine();
+        boolean ok = isBalanced(expr);
+        System.out.println(ok);
+        sc.close();
     }
 }
-
-int main() {
-    struct Node* root = NULL;
-
-    root = insert(root, 30);
-    root = insert(root, 20);
-    root = insert(root, 40);
-    root = insert(root, 10);
-    root = insert(root, 25);
-    root = insert(root, 50);
-    root = insert(root, 5);
-
-    printf("Inorder traversal of the constructed AVL tree is:\n");
-    inorder(root);
-
-    return 0;
-}
-
 ```
 
 ## Output:
-![image](https://github.com/user-attachments/assets/10988b0f-bcda-4be0-a905-0a2118906d94)
 
+<img width="443" height="361" alt="514896471-d8a974a9-2caa-46b2-8f1c-5854a59bf1b2" src="https://github.com/user-attachments/assets/4dade23e-43ad-43d3-9e3c-24e48cb049b6" />
 
 
 ## Result:
-Thus, the function to insert the elements in an AVL Tree is implemented successfully in C programming language.
+Thus,the program correctly checks whether an input string has balanced parentheses using a stack.
